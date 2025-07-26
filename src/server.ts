@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
 import { Server } from 'http';
 import mongoose from 'mongoose';
-import express from 'express'
+import app from './app';
 import { envVars } from './app/config/env';
+import { createSuperAdmin } from './app/utils/createSuperAdmin';
+import { connectRedis } from './app/config/redis.config';
 
 let server: Server;
-let app = express()
 
 const startServer = async () => {
   try {
@@ -21,7 +22,12 @@ const startServer = async () => {
   }
 };
 
-startServer();
+
+(async () => {
+  await connectRedis();
+  await startServer();
+  await createSuperAdmin()
+})()
 
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal recieved... Server shutting down..');
@@ -70,3 +76,4 @@ process.on('uncaughtException', err => {
 
   process.exit(1);
 });
+
