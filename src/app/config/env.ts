@@ -30,6 +30,7 @@ interface EnvConfig {
     SSL_SUCCESS_BACKEND_URL: string;
     SSL_FAIL_BACKEND_URL: string;
     SSL_CANCEL_BACKEND_URL: string;
+    SSL_IPN_URL: string;
   };
   CLOUDINARY: {
     CLOUDINARY_CLOUD_NAME: string;
@@ -42,7 +43,7 @@ interface EnvConfig {
     SMTP_PORT: string;
     SMTP_HOST: string;
     SMTP_FROM: string;
-  }
+  };
   REDIS_HOST?: string;
   REDIS_PORT?: string;
   REDIS_PASSWORD?: string;
@@ -77,6 +78,7 @@ const loadEnvVariables = (): EnvConfig => {
     'SSL_SUCCESS_BACKEND_URL',
     'SSL_FAIL_BACKEND_URL',
     'SSL_CANCEL_BACKEND_URL',
+    'SSL_IPN_URL',
     'CLOUDINARY_CLOUD_NAME',
     'CLOUDINARY_API_KEY',
     'CLOUDINARY_API_SECRET',
@@ -126,6 +128,7 @@ const loadEnvVariables = (): EnvConfig => {
       SSL_SUCCESS_BACKEND_URL: process.env.SSL_SUCCESS_BACKEND_URL as string,
       SSL_FAIL_BACKEND_URL: process.env.SSL_FAIL_BACKEND_URL as string,
       SSL_CANCEL_BACKEND_URL: process.env.SSL_CANCEL_BACKEND_URL as string,
+      SSL_IPN_URL: process.env.SSL_IPN_URL as string
     },
     CLOUDINARY: {
       CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,

@@ -16,6 +16,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const app_1 = __importDefault(require("./app"));
 const env_1 = require("./app/config/env");
 const createSuperAdmin_1 = require("./app/utils/createSuperAdmin");
+const redis_config_1 = require("./app/config/redis.config");
 let server;
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -30,8 +31,9 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    startServer();
-    (0, createSuperAdmin_1.createSuperAdmin)();
+    yield (0, redis_config_1.connectRedis)();
+    yield startServer();
+    yield (0, createSuperAdmin_1.createSuperAdmin)();
 }))();
 process.on('SIGTERM', () => {
     console.log('SIGTERM signal recieved... Server shutting down..');

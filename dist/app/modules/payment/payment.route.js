@@ -11,4 +11,5 @@ router.post('/init-payment/:bookingId', payment_controller_1.PaymentController.i
 router.post('/success', payment_controller_1.PaymentController.successPayment);
 router.post('/fail', payment_controller_1.PaymentController.failPayment);
 router.post('/cancel', payment_controller_1.PaymentController.cancelPayment);
+router.post('/validate-payment', payment_controller_1.PaymentController.validatePayment);
 exports.PaymentRoutes = router;

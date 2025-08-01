@@ -6,6 +6,8 @@ import { TourRoutes } from "../modules/tour/tour.route";
 import { BookingRoutes } from "../modules/booking/booking.route";
 import { PaymentRoutes } from "../modules/payment/payment.route";
 import { OtpRoutes } from "../modules/otp/otp.route";
+import { path } from "pdfkit";
+import { StatsRoutes } from "../modules/stats/stats.route";
 
 
 
@@ -42,6 +44,10 @@ const moduleRouters = [
     path: '/otp',
     route: OtpRoutes,
   },
+  {
+    path: '/stats',
+    route: StatsRoutes,
+  }
 ];
 
 

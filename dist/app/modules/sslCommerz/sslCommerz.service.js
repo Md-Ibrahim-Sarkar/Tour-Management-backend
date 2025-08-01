@@ -17,6 +17,7 @@ const axios_1 = __importDefault(require("axios"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const env_1 = require("../../config/env");
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
+const payment_model_1 = require("../payment/payment.model");
 const sslPaymentInit = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = {
@@ -28,7 +29,7 @@ const sslPaymentInit = (payload) => __awaiter(void 0, void 0, void 0, function* 
             success_url: `${env_1.envVars.SSL.SSL_SUCCESS_BACKEND_URL}?transactionId=${payload.transactionId}&amount=${payload.amount}&status=success`,
             fail_url: `${env_1.envVars.SSL.SSL_FAIL_FRONTEND_URL}?transactionId=${payload.transactionId}&amount=${payload.amount}&status=fail`,
             cancel_url: `${env_1.envVars.SSL.SSL_CANCEL_BACKEND_URL}?transactionId=${payload.transactionId}&amount=${payload.amount}&status=cancel`,
-            // ipn_url: "http://localhost:3030/ipn",
+            ipn_url: `${env_1.envVars.SSL.SSL_IPN_URL}`,
             shipping_method: 'N/A',
             product_name: 'TOUR',
             product_category: 'SERVICE',
@@ -65,6 +66,20 @@ const sslPaymentInit = (payload) => __awaiter(void 0, void 0, void 0, function* 
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, error.message);
     }
 });
+const validatepayment = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const response = yield (0, axios_1.default)({
+            method: 'GET',
+            url: `${env_1.envVars.SSL.SSL_VALIDATION_API}?val_id=${payload.val_id}&store_id=${env_1.envVars.SSL.STORE_ID}&store_passwd=${env_1.envVars.SSL.STORE_PASS}`,
+        });
+        yield payment_model_1.Payment.updateOne({ transactionId: payload.tran_id }, { paymentGatewayData: response.data }, { runValidators: true });
+    }
+    catch (error) {
+        console.log(error);
+        throw new AppError_1.default(401, `Payment Validation Error, ${error.message}`);
+    }
+});
 exports.SSLService = {
     sslPaymentInit,
+    validatepayment,
 };

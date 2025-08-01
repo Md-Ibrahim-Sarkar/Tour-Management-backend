@@ -34,6 +34,7 @@ const loadEnvVariables = () => {
         'SSL_SUCCESS_BACKEND_URL',
         'SSL_FAIL_BACKEND_URL',
         'SSL_CANCEL_BACKEND_URL',
+        'SSL_IPN_URL',
         'CLOUDINARY_CLOUD_NAME',
         'CLOUDINARY_API_KEY',
         'CLOUDINARY_API_SECRET',
@@ -42,6 +43,10 @@ const loadEnvVariables = () => {
         'SMTP_HOST',
         'SMTP_USER',
         'SMTP_FROM',
+        'REDIS_HOST',
+        'REDIS_PORT',
+        'REDIS_PASSWORD',
+        'REDIS_USERNAME',
     ];
     requiredEnvVariables.forEach(key => {
         if (!process.env[key]) {
@@ -77,6 +82,7 @@ const loadEnvVariables = () => {
             SSL_SUCCESS_BACKEND_URL: process.env.SSL_SUCCESS_BACKEND_URL,
             SSL_FAIL_BACKEND_URL: process.env.SSL_FAIL_BACKEND_URL,
             SSL_CANCEL_BACKEND_URL: process.env.SSL_CANCEL_BACKEND_URL,
+            SSL_IPN_URL: process.env.SSL_IPN_URL
         },
         CLOUDINARY: {
             CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
@@ -90,6 +96,10 @@ const loadEnvVariables = () => {
             SMTP_HOST: process.env.SMTP_HOST,
             SMTP_FROM: process.env.SMTP_FROM,
         },
+        REDIS_HOST: process.env.REDIS_HOST,
+        REDIS_PORT: process.env.REDIS_PORT,
+        REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+        REDIS_USERNAME: process.env.REDIS_USERNAME,
     };
 };
 exports.envVars = loadEnvVariables();
