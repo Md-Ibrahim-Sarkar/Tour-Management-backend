@@ -1,4 +1,3 @@
-
 import { envVars } from '../config/env';
 import AppError from '../errorHelpers/AppError';
 import { verifyToken } from '../utils/jwt';
@@ -8,12 +7,10 @@ import { User } from '../modules/user/user.model';
 import { IsActive } from '../modules/user/user.interface';
 import { StatusCodes } from 'http-status-codes';
 
-export const checkAuth =
-  (...authRole: string[]) =>
-  async (req: Request, res: Response, next: NextFunction) => {
+export const checkAuth = (...authRole: string[]) => async (req: Request, res: Response, next: NextFunction) => {
     try {
       let accessToken = req.cookies.accessToken;
-      if (req.body.token) {
+      if (req?.body?.token) {
         accessToken = req.body.token;
       }
       if (!accessToken) {
@@ -29,8 +26,14 @@ export const checkAuth =
       if (!isUserExist) {
         throw new AppError(StatusCodes.BAD_REQUEST, 'User does not exist');
       }
-      if ( isUserExist.isActive === IsActive.BLOCKED || isUserExist.isActive === IsActive.INACTIVE ) {
-        throw new AppError( StatusCodes.BAD_REQUEST, `User is ${isUserExist.isActive}`);
+      if (
+        isUserExist.isActive === IsActive.BLOCKED ||
+        isUserExist.isActive === IsActive.INACTIVE
+      ) {
+        throw new AppError(
+          StatusCodes.BAD_REQUEST,
+          `User is ${isUserExist.isActive}`
+        );
       }
       if (isUserExist.isDeleted) {
         throw new AppError(StatusCodes.BAD_REQUEST, 'User is deleted');

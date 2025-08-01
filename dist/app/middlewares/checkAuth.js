@@ -20,9 +20,10 @@ const user_model_1 = require("../modules/user/user.model");
 const user_interface_1 = require("../modules/user/user.interface");
 const http_status_codes_1 = require("http-status-codes");
 const checkAuth = (...authRole) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         let accessToken = req.cookies.accessToken;
-        if (req.body.token) {
+        if ((_a = req === null || req === void 0 ? void 0 : req.body) === null || _a === void 0 ? void 0 : _a.token) {
             accessToken = req.body.token;
         }
         if (!accessToken) {

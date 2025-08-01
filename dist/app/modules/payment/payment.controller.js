@@ -17,6 +17,7 @@ const env_1 = require("../../config/env");
 const catchAsync_1 = require("../../utils/catchAsync");
 const payment_service_1 = require("./payment.service");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
+const sslCommerz_service_1 = require("../sslCommerz/sslCommerz.service");
 const initPayment = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const bookingId = req.params.bookingId;
     const result = yield payment_service_1.PaymentService.initPayment(bookingId);
@@ -48,9 +49,20 @@ const cancelPayment = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 
         res.redirect(`${env_1.envVars.SSL.SSL_CANCEL_FRONTEND_URL}?transactionId=${query.transactionId}&message=${result.message}&amount=${query.amount}&status=${query.status}`);
     }
 }));
+const validatePayment = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('sslcommerz ipn url body', req.body);
+    yield sslCommerz_service_1.SSLService.validatepayment(req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Payment Validated Successfully',
+        data: null,
+    });
+}));
 exports.PaymentController = {
     initPayment,
     successPayment,
     failPayment,
     cancelPayment,
+    validatePayment,
 };

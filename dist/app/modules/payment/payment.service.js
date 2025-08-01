@@ -21,6 +21,9 @@ const booking_model_1 = require("../booking/booking.model");
 const sslCommerz_service_1 = require("../sslCommerz/sslCommerz.service");
 const payment_interface_1 = require("./payment.interface");
 const payment_model_1 = require("./payment.model");
+const sendEmail_1 = require("../../utils/sendEmail");
+const invoice_1 = require("../../utils/invoice");
+const cloudinary_config_1 = require("../../config/cloudinary.config");
 const initPayment = (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
     const payment = yield payment_model_1.Payment.findOne({ booking: bookingId });
     if (!payment) {
@@ -54,6 +57,42 @@ const successPayment = (query) => __awaiter(void 0, void 0, void 0, function* ()
             status: payment_interface_1.PAYMENT_STATUS.PAID,
         }, { new: true, runValidators: true, session: session });
         yield booking_model_1.Booking.findByIdAndUpdate(updatedPayment === null || updatedPayment === void 0 ? void 0 : updatedPayment.booking, { status: booking_interface_1.BOOKING_STATUS.COMPLETE }, { runValidators: true, session });
+        if (!updatedPayment) {
+            throw new AppError_1.default(401, 'Payment not found');
+        }
+        const updatedBooking = yield booking_model_1.Booking.findByIdAndUpdate(updatedPayment === null || updatedPayment === void 0 ? void 0 : updatedPayment.booking, { status: booking_interface_1.BOOKING_STATUS.COMPLETE }, { new: true, runValidators: true, session })
+            .populate('tour', 'title')
+            .populate('user', 'name email');
+        if (!updatedBooking) {
+            throw new AppError_1.default(401, 'Booking not found');
+        }
+        const invoiceData = {
+            bookingDate: updatedBooking.createdAt,
+            guestCount: updatedBooking.guestCount,
+            totalAmount: updatedPayment.amount,
+            tourTitle: updatedBooking.tour.title,
+            transactionId: updatedPayment.transactionId,
+            userName: updatedBooking.user.name,
+        };
+        const pdfBuffer = yield (0, invoice_1.generatePdf)(invoiceData);
+        const cloudinaryResult = yield (0, cloudinary_config_1.uploadBufferToCloudinary)(pdfBuffer, 'invoice');
+        if (!cloudinaryResult) {
+            throw new AppError_1.default(401, 'Error uploading pdf');
+        }
+        yield payment_model_1.Payment.findByIdAndUpdate(updatedPayment._id, { invoiceUrl: cloudinaryResult.secure_url }, { runValidators: true, session });
+        yield (0, sendEmail_1.sendEmail)({
+            to: updatedBooking.user.email,
+            subject: 'Your Booking Invoice',
+            templateName: 'invoice',
+            templateData: invoiceData,
+            attachments: [
+                {
+                    filename: 'invoice.pdf',
+                    content: pdfBuffer,
+                    contentType: 'application/pdf',
+                },
+            ],
+        });
         yield session.commitTransaction(); //transaction
         session.endSession();
         return { success: true, message: 'Payment Completed Successfully' };
